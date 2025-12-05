@@ -1,0 +1,22 @@
+[gd_scene load_steps=4 format=3 uid="uid://cotloupd2wki0"]
+
+[ext_resource type="Shader" uid="uid://0dvvs5h12pp0" path="res://Shaders/raymarching00.gdshader" id="1_oq3si"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_4s5va"]
+render_priority = 0
+shader = ExtResource("1_oq3si")
+
+[sub_resource type="QuadMesh" id="QuadMesh_imecy"]
+material = SubResource("ShaderMaterial_4s5va")
+flip_faces = true
+size = Vector2(2, 2)
+
+[node name="Node3D" type="Node3D"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00025773048, -0.005789697, 0)
+extra_cull_margin = 16384.0
+mesh = SubResource("QuadMesh_imecy")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.4632742)

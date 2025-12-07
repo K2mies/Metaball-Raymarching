@@ -31,10 +31,10 @@ vec3 opRep( vec3 p, vec3 c )
 	return q;
 }
 
-float smooth_min(float dstA, float dstB, float k)
+float smooth_min( float dstA, float dstB, float k )
 {
-	float h = max(k - abs(dstA - dstB), 0) / k;
-	return (min(dstA, dstB) - h*h*h*k*1.f / 6.f);
+	float h = max( k - abs( dstA - dstB ), 0 ) / k;
+	return ( min( dstA, dstB ) - h*h*h*k*1.f / 6.f x );
 }
 
 vec4 get_distance_with_color( vec3 p )

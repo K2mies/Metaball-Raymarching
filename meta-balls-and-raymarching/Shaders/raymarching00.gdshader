@@ -7,7 +7,7 @@ const float MAX_DISTANCE = 1000.f;
 const float MIN_DISTANCE = 0.001f;
 
 // ------------------------------------------------------------------- functions
-float signedDistanceToSphere( vec3 p, vec3 centrum, float radius )
+float signedDistanceSphere( vec3 p, vec3 centrum, float radius )
 {
 	return length( centrum - p ) - radius;
 }
@@ -24,7 +24,7 @@ float get_distance( vec3 p )
 	//p = opRep( p, vec3( 3 ) ); //uncomment for repeating spheres
 	p = opRep( p, vec3( -6.f, -6.f, -6.f ) ); //uncomment for repeating spheres
 
-	return signedDistanceToSphere( p, vec3( 0.f, 0.f, -3.f ), 1.f ); // you can change the position of the sphere from the vec3
+	return signedDistanceSphere( p, vec3( 0.f, 0.f, -3.f ), 1.f ); // you can change the position of the sphere from the vec3
 }
 
 vec3 get_normal( vec3 p )

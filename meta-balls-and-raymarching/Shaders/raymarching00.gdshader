@@ -84,7 +84,7 @@ vec3 get_normal( vec3 p )
 	return normalize( n );
 }
 
-//non colored metaballs
+// ------------------------------------------------------- non colored meta balls
 //vec4 raymarch( vec3 ray_origin, vec3 ray_dir )
 //{
 	//float	t = 0.f;
@@ -111,7 +111,7 @@ vec3 get_normal( vec3 p )
 	////return vec4( 0.f );
 //}
 
-//color meta balls
+// ---------------------------------------------------------- colored meta balls
 vec4 raymarch( vec3 ray_origin, vec3 ray_dir )
 {
 	float	t = 0.f;

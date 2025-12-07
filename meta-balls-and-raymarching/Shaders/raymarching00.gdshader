@@ -21,8 +21,8 @@ vec3 opRep( vec3 p, vec3 c )
 
 float get_distance( vec3 p )
 {
-	//p = opRep(p, vec3(3)); //uncomment for repeating spheres
-	p = opRep(p, vec3(-6.f, -6.f, -6.f)); //uncomment for repeating spheres
+	//p = opRep( p, vec3( 3 ) ); //uncomment for repeating spheres
+	p = opRep( p, vec3( -6.f, -6.f, -6.f ) ); //uncomment for repeating spheres
 
 	return signedDistanceToSphere( p, vec3( 0.f, 0.f, -3.f ), 1.f ); // you can change the position of the sphere from the vec3
 }

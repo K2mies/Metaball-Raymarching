@@ -34,24 +34,24 @@ vec3 opRep( vec3 p, vec3 c )
 float smooth_min( float dstA, float dstB, float k )
 {
 	float h = max( k - abs( dstA - dstB ), 0 ) / k;
-	return ( min( dstA, dstB ) - h*h*h*k*1.f / 6.f x );
+	return ( min( dstA, dstB ) - h*h*h*k*1.f / 6.f );
 }
 
 vec4 get_distance_with_color( vec3 p )
 {
 	//First sphere distance
-	float sphere01 = signedDistanceSphere(p, sphere_param[sphere_a], 1.f);
+	float sphere01 = signedDistanceSphere( p, sphere_param[sphere_a], 1.f );
 	//Second sphere distance
-	float sphere02 = signedDistanceSphere(p, sphere_param[sphere_b], 1.f);
+	float sphere02 = signedDistanceSphere( p, sphere_param[sphere_b], 1.f );
 	
 	// Calculate the blend factor 'h' (identical logic to smooth_min)
-	float h = clamp(0.5 + 0.5 * (sphere01 - sphere02) / weight, 0.0, 1.0);
+	float h = clamp( 0.5 + 0.5 * ( sphere01 - sphere02 ) / weight, 0.0, 1.0 );
 	// Mix the distances (standard smooth min)
-	float dist = mix(sphere01, sphere02, h) - weight * h * (1.f - h);
+	float dist = mix( sphere01, sphere02, h ) - weight * h * ( 1.f - h );
 	// Mix the colors based on the same blend factor
-	vec3 mixed_color = mix(colors[color_b], colors[color_a], h);
+	vec3 mixed_color = mix( colors[color_b], colors[color_a], h );
 	
-	return vec4(mixed_color, dist);
+	return vec4( mixed_color, dist );
 }
 
 float get_distance( vec3 p )
@@ -69,7 +69,7 @@ float get_distance( vec3 p )
 	//return min(sphere01, sphere02);
 	//p = opRep( p, vec3( -6.f, -6.f, -6.f ) ); //uncomment for repeating spheres
 	//return signedDistanceSphere( p, vec3( 0.f, 0.f, -3.f ), 1.f ); // you can change the position of the sphere from the vec3
-	return get_distance_with_color(p).w;
+	return get_distance_with_color( p ).w;
 }
 
 vec3 get_normal( vec3 p )

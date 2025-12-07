@@ -8,7 +8,7 @@ shader = ExtResource("1_oq3si")
 
 [sub_resource type="QuadMesh" id="QuadMesh_imecy"]
 material = SubResource("ShaderMaterial_4s5va")
-size = Vector2(2, 2)
+size = Vector2(3.94, 2)
 
 [node name="Node3D" type="Node3D"]
 
@@ -18,4 +18,4 @@ extra_cull_margin = 16384.0
 mesh = SubResource("QuadMesh_imecy")
 
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5.0950866)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.7828755)

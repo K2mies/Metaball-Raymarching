@@ -1,10 +1,22 @@
 shader_type spatial;
 render_mode unshaded;
 
+// -------------------------------------------------------------------- uniforms
+uniform vec3	sphere_param[2];
+uniform vec3	colors[2];
+uniform float	weight;
+
 // ------------------------------------------------------------------- variables
 const int	MAX_STEPS = 300;
 const float MAX_DISTANCE = 1000.f;
 const float MIN_DISTANCE = 0.001f;
+
+// ----------------------------------------------------------------------- enums
+const int sphere_a = 0;
+const int sphere_b = 1;
+
+const int color_a = 0;
+const int color_b = 1;
 
 // ------------------------------------------------------------------- functions
 float signedDistanceSphere( vec3 p, vec3 centrum, float radius )
@@ -19,10 +31,45 @@ vec3 opRep( vec3 p, vec3 c )
 	return q;
 }
 
+float smooth_min(float dstA, float dstB, float k)
+{
+	float h = max(k - abs(dstA - dstB), 0) / k;
+	return (min(dstA, dstB) - h*h*h*k*1.f / 6.f);
+}
+
+vec4 get_distance_with_color( vec3 p )
+{
+	//First sphere distance
+	float sphere01 = signedDistanceSphere(p, sphere_param[sphere_a], 1.f);
+	//Second sphere distance
+	float sphere02 = signedDistanceSphere(p, sphere_param[sphere_b], 1.f);
+	
+	// Calculate the blend factor 'h' (identical logic to smooth_min)
+	float h = clamp(0.5 + 0.5 * (sphere01 - sphere02) / weight, 0.0, 1.0);
+	// Mix the distances (standard smooth min)
+	float dist = mix(sphere01, sphere02, h) - weight * h * (1.f - h);
+	// Mix the colors based on the same blend factor
+	vec3 mixed_color = mix(colors[color_b], colors[color_a], h);
+	
+	return vec4(mixed_color, dist);
+}
+
 float get_distance( vec3 p )
 {
-	p = opRep( p, vec3( -6.f, -6.f, -6.f ) ); //uncomment for repeating spheres
-	return signedDistanceSphere( p, vec3( 0.f, 0.f, -3.f ), 1.f ); // you can change the position of the sphere from the vec3
+	//First sphere distance
+	//float sphere01 = signedDistanceSphere(p, vec3(-1.5f, 0.f, -3.f), 1.f);
+	//float sphere01 = signedDistanceSphere(p, sphere_param[sphere_a], 1.f);
+
+	//Second sphere distance
+	//float sphere02 = signedDistanceSphere(p, vec3(1.5f, 0.f, -3.f), 1.f);
+	//float sphere02 = signedDistanceSphere(p, sphere_param[sphere_b], 1.f);
+
+	// Combine them: the renderer will hit whichever surface is closer
+	//return smooth_min(sphere01, sphere02, weight);
+	//return min(sphere01, sphere02);
+	//p = opRep( p, vec3( -6.f, -6.f, -6.f ) ); //uncomment for repeating spheres
+	//return signedDistanceSphere( p, vec3( 0.f, 0.f, -3.f ), 1.f ); // you can change the position of the sphere from the vec3
+	return get_distance_with_color(p).w;
 }
 
 vec3 get_normal( vec3 p )
@@ -37,20 +84,51 @@ vec3 get_normal( vec3 p )
 	return normalize( n );
 }
 
+//non colored metaballs
+//vec4 raymarch( vec3 ray_origin, vec3 ray_dir )
+//{
+	//float	t = 0.f;
+	//vec3	p = ray_origin;
+	//int		i = 0;
+	//
+	//for ( int i = 0; i < MAX_STEPS; i++ )
+	//{
+		//float d = get_distance( p );
+//
+		//if( abs( d ) < MIN_DISTANCE )
+		//{
+			//vec3 normal = get_normal( p ) * .5f + .5f;
+			//return vec4( normal, 1.f );
+		//}
+		//
+		//if( t > MAX_DISTANCE )
+			//break;
+		//
+		//t += d;	
+		//p += d * ray_dir;
+	//}
+	//return vec4(float(i) * 0.01f); // uncomment for simple glow effect
+	////return vec4( 0.f );
+//}
+
+//color meta balls
 vec4 raymarch( vec3 ray_origin, vec3 ray_dir )
 {
 	float	t = 0.f;
 	vec3	p = ray_origin;
+	int		i = 0;
 	
 	for ( int i = 0; i < MAX_STEPS; i++ )
 	{
-		float d = get_distance( p );
-		//t += d;
-		
+		vec4 scene = get_distance_with_color( p );
+		float d = scene.w;
+		vec3 col = scene.xyz;
+
 		if( abs( d ) < MIN_DISTANCE )
 		{
-			vec3 normal = get_normal( p ) * .5f + .5f;
-			return vec4( normal, 1.f );
+			//vec3 normal = get_normal( p ) * .5f + .5f;
+			//return vec4( normal, 1.f );
+			return vec4(col, 1.f);
 		}
 		
 		if( t > MAX_DISTANCE )
@@ -59,8 +137,9 @@ vec4 raymarch( vec3 ray_origin, vec3 ray_dir )
 		t += d;	
 		p += d * ray_dir;
 	}
+	return vec4(0.f);
 	//return vec4(float(i) * 0.01f); // uncomment for simple glow effect
-	return vec4( 0.f );
+	//return vec4( 0.f );
 }
 
 // --------------------------------------------------------------- vertex shader

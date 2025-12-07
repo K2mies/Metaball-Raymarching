@@ -5,6 +5,9 @@
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_4s5va"]
 render_priority = 0
 shader = ExtResource("1_oq3si")
+shader_parameter/sphere_param = PackedVector3Array(-1.97, -0.41, -2.25, 1, 0, -0.96)
+shader_parameter/colors = PackedVector3Array(1, -0.13, 1.32, -0.38, 0.05, 1.11)
+shader_parameter/weight = 2.9
 
 [sub_resource type="QuadMesh" id="QuadMesh_imecy"]
 material = SubResource("ShaderMaterial_4s5va")

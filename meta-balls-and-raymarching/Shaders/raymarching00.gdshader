@@ -35,20 +35,20 @@ float signedDistanceCube( vec3 p, vec3 centre, vec3 size )
 	// distance from point outside box to edge (0 if inside box)
 	float unsignedDistance = length( max( offset, 0.f ) );
 	// distance from point inside box to edge (0 if outside box)
-	float distanceInsideBox = min(max(offset.x, max(offset.y, offset.z)), 0.0);
+	float distanceInsideBox = min( max( offset.x, max( offset.y, offset.z ) ), 0.0 );
 	return unsignedDistance + distanceInsideBox;
 }
 // ------------------------------------------------------- transformation matrix
-vec3 rotate(vec3 v, vec3 axis, float angle)
+vec3 rotate( vec3 v, vec3 axis, float angle )
 {
-	float s =	sin(angle);
-	float c =	cos(angle);
+	float s =	sin( angle );
+	float c =	cos( angle );
 	float oc =	1.f - c;
 	
 	mat3 rot = mat3(
-		vec3(oc * axis.x * axis.x + c,				oc * axis.x * axis.y - axis.z * s,		oc * axis.z * axis.x + axis.y * s),
-		vec3(oc * axis.x * axis.y + axis.z * s, 	oc * axis.y * axis.y + c,           	oc * axis.y * axis.z - axis.x * s),
-		vec3(oc * axis.z * axis.x - axis.y * s, 	oc * axis.y * axis.z + axis.x * s,  	oc * axis.z * axis.z + c)
+		vec3( oc * axis.x * axis.x + c,				oc * axis.x * axis.y - axis.z * s,		oc * axis.z * axis.x + axis.y * s ),
+		vec3( oc * axis.x * axis.y + axis.z * s, 	oc * axis.y * axis.y + c,           	oc * axis.y * axis.z - axis.x * s ),
+		vec3( oc * axis.z * axis.x - axis.y * s, 	oc * axis.y * axis.z + axis.x * s,  	oc * axis.z * axis.z + c )
 	);
 	return rot * v;
 }
@@ -77,10 +77,11 @@ vec4 get_distance_with_color( vec3 p )
 	vec3 local_p = p - translate[cube_b];
 	
 	// We rotate around axies based on TIME
-	local_p = rotate(local_p, normalize(cube_rotation_axis), cube_rotation_amount * TIME);
+	local_p = rotate( local_p, normalize( cube_rotation_axis ), cube_rotation_amount * TIME );
 
 	//float sphere02 = signedDistanceCube(p, translate[cube_b], vec3(1.f));
-	float sphere02 = signedDistanceCube(local_p, vec3(0.f), vec3(cube_size, cube_size, cube_size));
+	vec3 size = vec3( cube_size );
+	float sphere02 = signedDistanceCube( local_p, vec3( 0.f ), size );
 
 	
 	// Calculate the blend factor 'h' (identical logic to smooth_min)
@@ -166,9 +167,11 @@ vec4 raymarch_color( vec3 ray_origin, vec3 ray_dir )
 		if( abs( d ) < MIN_DISTANCE )
 		{
 			//here we mix the color channel with the normals for effect
-			vec3 normal = get_normal( p ) * .5f + .5f;
-			vec4 normal4 = vec4(normal, 1.f);
+			vec3 normal =	get_normal( p ) * .5f + .5f;
+			
+			vec4 normal4 =	vec4(normal, 1.f);
 			vec4 col4 =		vec4(col, 1.f);
+			
 			return mix(normal4, col4, .5f);
 			//return vec4( normal, 1.f );
 			//return vec4(col, 1.f);
@@ -204,7 +207,7 @@ void fragment() {
 	//vec4 col_b = raymarch_color( ray_origin, ray_direction );
 	
 	//vec4 col = mix(col_a, col_b, .5f);
-	vec4 col = raymarch_color(ray_origin, ray_direction);
+	vec4 col = raymarch_color( ray_origin, ray_direction );
 	
 	ALPHA =		col.a;
 	ALBEDO =	col.rgb;

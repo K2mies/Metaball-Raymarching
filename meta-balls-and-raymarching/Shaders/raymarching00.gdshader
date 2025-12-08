@@ -169,10 +169,10 @@ vec4 raymarch_color( vec3 ray_origin, vec3 ray_dir )
 			//here we mix the color channel with the normals for effect
 			vec3 normal =	get_normal( p ) * .5f + .5f;
 			
-			vec4 normal4 =	vec4(normal, 1.f);
-			vec4 col4 =		vec4(col, 1.f);
+			vec4 normal4 =	vec4( normal, 1.f );
+			vec4 col4 =		vec4( col, 1.f );
 			
-			return mix(normal4, col4, .5f);
+			return mix( normal4, col4, .5f );
 			//return vec4( normal, 1.f );
 			//return vec4(col, 1.f);
 		}

@@ -5,13 +5,13 @@
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_4s5va"]
 render_priority = 0
 shader = ExtResource("1_oq3si")
-shader_parameter/translate = PackedVector3Array(-0.74, 0.09, -0.24, 0.89, -0.09, 0)
-shader_parameter/colors = PackedVector3Array(0.74, -0.25, -1.15, 1.17, 0.01, -2.08)
-shader_parameter/cube_rotation_axis = Vector3(0, 1, 1)
+shader_parameter/translate = PackedVector3Array(-0.73, 0.09, 0, 0.89, -0.09, 0)
+shader_parameter/colors = PackedVector3Array(2.56, 0, -2.71, -2.13, 0.25, 2.95)
+shader_parameter/cube_rotation_axis = Vector3(1, 1, 1)
 shader_parameter/cube_rotation_amount = 0.74
 shader_parameter/cube_size = 0.37
-shader_parameter/sphere_size = 0.62
-shader_parameter/weight = 1.6099999999999999
+shader_parameter/sphere_size = 0.47
+shader_parameter/weight = 1.73
 
 [sub_resource type="QuadMesh" id="QuadMesh_imecy"]
 material = SubResource("ShaderMaterial_4s5va")
@@ -20,7 +20,6 @@ size = Vector2(3.94, 2)
 [node name="Node3D" type="Node3D"]
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00025773048, -0.005789697, 0)
 extra_cull_margin = 16384.0
 mesh = SubResource("QuadMesh_imecy")
 

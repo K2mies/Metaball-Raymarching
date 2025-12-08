@@ -23,7 +23,8 @@ const int cube_b =		1;
 const int color_a =		0;
 const int color_b =		1;
 
-// ------------------------------------------------------------------- functions
+// ------------------------------------------------------ signed distance fields
+
 float signedDistanceSphere( vec3 p, vec3 centrum, float radius )
 {
 	return length( centrum - p ) - radius;
@@ -53,19 +54,21 @@ vec3 rotate( vec3 v, vec3 axis, float angle )
 	return rot * v;
 }
 
-//infinite repititions
+// -------------------------------------------------------- infinite repititions
 vec3 opRep( vec3 p, vec3 c )
 {
 	vec3 q = mod( p + .5f * c, c ) - .5f * c;
 	return q;
 }
 
+// ------------------------------------------------------------------ smooth min
 float smooth_min( float dstA, float dstB, float k )
 {
 	float h = max( k - abs( dstA - dstB ), 0 ) / k;
 	return ( min( dstA, dstB ) - h*h*h*k*1.f / 6.f );
 }
 
+// ----------------------------------------------------------------- get distance
 vec4 get_distance_with_color( vec3 p )
 {
 	//First sphere distance
@@ -112,6 +115,7 @@ float get_distance( vec3 p )
 	return get_distance_with_color( p ).w;
 }
 
+// ------------------------------------------------------------------ get normal
 vec3 get_normal( vec3 p )
 {
 	vec2 e = vec2( 0.001f, 0 );
@@ -151,7 +155,7 @@ vec3 get_normal( vec3 p )
 	////return vec4( 0.f );
 //}
 
-// ---------------------------------------------------------- colored meta balls
+// --------------------------------------------------------- colored raymarching
 vec4 raymarch_color( vec3 ray_origin, vec3 ray_dir )
 {
 	float	t = 0.f;

@@ -6,9 +6,9 @@
 render_priority = 0
 shader = ExtResource("1_oq3si")
 shader_parameter/translate = PackedVector3Array(-0.74, -0.14, -0.24, 0.89, -0.09, 0)
-shader_parameter/colors = PackedVector3Array(-1, -1, 1, 1, -1, -1)
+shader_parameter/colors = PackedVector3Array(0.74, -0.25, -1.15, 1.17, 0.01, -2.08)
 shader_parameter/cube_rotation_axis = Vector3(0, 1, 1)
-shader_parameter/cube_rotation_amount = 2.29
+shader_parameter/cube_rotation_amount = 0.74
 shader_parameter/cube_size = 0.37
 shader_parameter/sphere_size = 0.62
 shader_parameter/weight = 1.6099999999999999

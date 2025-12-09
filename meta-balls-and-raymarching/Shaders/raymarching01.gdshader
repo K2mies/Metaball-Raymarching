@@ -1,16 +1,24 @@
 shader_type spatial;
 render_mode unshaded;
 
+/*																				*
+*						RAYMARCHER WITH SHAPE BLENDING							*
+*																				*/
+
 // -------------------------------------------------------------------- uniforms
 uniform vec3	translate[3];
 uniform vec3	colors[3];
+
 uniform vec3	cube_rotation_axis =		vec3(0.f, 1.f, 0.f);
 uniform float	cube_rotation_amount =		0.f;
+
 uniform vec3	torus_rotation_axis =		vec3(0.f, 1.f, 0.f);
 uniform float	torus_rotation_amount =		0.f;
+
 uniform float	cube_size =					1.f;
 uniform float	sphere_size =				1.f;
 uniform vec2	torus_radii = 				vec2( 1.5f, .5f );
+
 uniform float	weight;
 
 // ------------------------------------------------------------------- variables
@@ -59,9 +67,9 @@ float signedDistanceCube( vec3 p, vec3 centre, vec3 size )
 	return unsignedDistance +	distanceInsideBox;
 }
 
-float signedDistanceTorus(vec3 p, vec2 t)
+float signedDistanceTorus( vec3 p, vec2 t )
 {
-	vec2 q = vec2( length( p.xz ) -t.x, p.y);
+	vec2 q = vec2( length( p.xz ) -t.x, p.y );
 	return length( q ) -t.y;
 }
 // ------------------------------------------------------- transformation matrix
@@ -79,36 +87,23 @@ vec3 rotate( vec3 v, vec3 axis, float angle )
 	return rot * v;
 }
 
-// -------------------------------------------------------- infinite repititions
-vec3 opRep( vec3 p, vec3 c )
-{
-	vec3 q = mod( p + .5f * c, c ) - .5f * c;
-	return q;
-}
-
 // ------------------------------------------------------------------ smooth min
 
-Result smooth_min(Result a, Result b, float smooth_weight)
+Result smooth_min( Result a, Result b, float smooth_weight )
 {
 	// Standard smooth minimum distance calculation
-	float blend_factor = clamp( 0.5 + 0.5 * (b.dist - a.dist)
-									/ smooth_weight, 0.0, 1.0);
+	float blend_factor = clamp( 0.5 + 0.5 * ( b.dist - a.dist )
+									/ smooth_weight, 0.0, 1.0 );
 									
-	float dist = mix(b.dist, a.dist, blend_factor) 
+	float dist = mix( b.dist, a.dist, blend_factor ) 
 									- smooth_weight 
 									* blend_factor
-									* (1.0 - blend_factor);
+									* ( 1.0 - blend_factor );
 	
 	// Mix colors in the blend zone
-	vec3 final_color = mix(b.color, a.color, blend_factor);
-	return Result( dist, final_color);
+	vec3 final_color = mix( b.color, a.color, blend_factor );
+	return Result( dist, final_color );
 }
-
-//float smooth_min( float dstA, float dstB, float k )
-//{
-	//float h = max( k - abs( dstA - dstB ), 0 ) / k;
-	//return ( min( dstA, dstB ) - h*h*h*k*1.f / 6.f );
-//}
 
 // ----------------------------------------------------------------- get distance
 vec4 get_distance_with_color( vec3 p )
@@ -173,15 +168,13 @@ vec4 raymarch_color( vec3 ray_origin, vec3 ray_dir )
 
 		if( abs( d ) < MIN_DISTANCE )
 		{
-			//here we mix the color channel with the normals for effect
+			//here we mix the color channel with the normal channel for effect
 			vec3 normal =	get_normal( p ) * .5f + .5f;
 			
 			vec4 normal4 =	vec4( normal, 1.f );
 			vec4 col4 =		vec4( col, 1.f );
 			
 			return mix( normal4, col4, .5f );
-			//return vec4( normal, 1.f );
-			//return vec4(col, 1.f);
 		}
 		if( t > MAX_DISTANCE )
 			break;
@@ -190,7 +183,6 @@ vec4 raymarch_color( vec3 ray_origin, vec3 ray_dir )
 		p += d * ray_dir;
 	}
 	return vec4(0.f);
-	//return vec4(float(i) * 0.01f); // uncomment for simple glow effect
 }
 
 // ------------------------------------------------------------- fragment shader

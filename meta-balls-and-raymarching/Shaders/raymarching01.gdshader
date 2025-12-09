@@ -60,7 +60,7 @@ float signedDistanceCube( vec3 p, vec3 centre, vec3 size )
 {
 	vec3 offset = abs( p - centre ) - size;
 	// distance from point outside box to edge (0 if inside box)
-	float unsignedDistance =	length( max( offset, 0.f ) );
+	float unsignedDistance =		length( max( offset, 0.f ) );
 	// distance from point inside box to edge (0 if outside box)
 	float distanceInsideBox =	min( max( offset.x, max( offset.y, offset.z ) ), 0.0 );
 	return unsignedDistance +	distanceInsideBox;

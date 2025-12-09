@@ -188,7 +188,8 @@ vec4 raymarch_color( vec3 ray_origin, vec3 ray_dir )
 }
 
 // ------------------------------------------------------------- fragment shader
-void fragment() {
+void fragment() 
+{
 	vec2 uv = SCREEN_UV * 2.f - 1.f;
 	
 	vec4 clip_position =	vec4( uv, 1.f, 1.f );

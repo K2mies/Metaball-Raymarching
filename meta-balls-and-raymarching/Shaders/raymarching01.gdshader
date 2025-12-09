@@ -51,7 +51,6 @@ struct Result
 };
 
 // ------------------------------------------------------ signed distance fields
-
 float signedDistanceSphere( vec3 p, vec3 centrum, float radius )
 {
 	return length( centrum - p ) - radius;
@@ -72,6 +71,7 @@ float signedDistanceTorus( vec3 p, vec2 t )
 	vec2 q = vec2( length( p.xz ) -t.x, p.y );
 	return length( q ) -t.y;
 }
+
 // ------------------------------------------------------- transformation matrix
 vec3 rotate( vec3 v, vec3 axis, float angle )
 {
@@ -88,7 +88,6 @@ vec3 rotate( vec3 v, vec3 axis, float angle )
 }
 
 // ------------------------------------------------------------------ smooth min
-
 Result smooth_min( Result a, Result b, float smooth_weight )
 {
 	// Standard smooth minimum distance calculation
@@ -155,6 +154,7 @@ vec3 get_normal( vec3 p )
 	);
 	return normalize( n );
 }
+
 // --------------------------------------------------------- colored raymarching
 vec4 raymarch_color( vec3 ray_origin, vec3 ray_dir )
 {

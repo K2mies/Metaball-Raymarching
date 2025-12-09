@@ -9,10 +9,10 @@ render_mode unshaded;
 uniform vec3	translate[3];
 uniform vec3	colors[3];
 
-uniform vec3	cube_rotation_axis =		vec3(0.f, 1.f, 0.f);
+uniform vec3	cube_rotation_axis =		vec3( 0.f, 1.f, 0.f );
 uniform float	cube_rotation_amount =		0.f;
 
-uniform vec3	torus_rotation_axis =		vec3(0.f, 1.f, 0.f);
+uniform vec3	torus_rotation_axis =		vec3( 0.f, 1.f, 0.f );
 uniform float	torus_rotation_amount =		0.f;
 
 uniform float	cube_size =					1.f;

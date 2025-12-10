@@ -151,7 +151,7 @@ vec4 get_distance_with_color( vec3 p )
 	// ---------------------- SHAPE 4: Cylinder (Color D) --------------------
 	vec3 cylinder_p = p - translate[cylinder_d];
 	cylinder_p =		rotate( cylinder_p, normalize( cylinder_rotation_axis ),
-													cylinder_rotation_amount * TIME);
+												cylinder_rotation_amount * TIME);
 	
 	float obj04 =	signedDistanceCylinder( cylinder_p,
 											cylinder_dimensions.x,

@@ -32,23 +32,23 @@ const float MIN_DISTANCE =		0.001f;
 
 // ----------------------------------------------------------------------- enums
 const int sphere_a =		0;
-const int sphere_b =		1;
-const int sphere_c =		2;
-const int sphere_d =		3;
+//const int sphere_b =		1;
+//const int sphere_c =		2;
+//const int sphere_d =		3;
 
-const int cube_a =		0;
+//const int cube_a =		0;
 const int cube_b =		1;
-const int cube_c =		2;
-const int cube_d =		3;
+//const int cube_c =		2;
+//const int cube_d =		3;
 
-const int torus_a =		0;
-const int torus_b =		1;
+//const int torus_a =		0;
+//const int torus_b =		1;
 const int torus_c = 		2;
-const int torus_d = 		3;
+//const int torus_d = 		3;
 
-const int cylinder_a =	0;
-const int cylinder_b =	1;
-const int cylinder_c =	2;
+//const int cylinder_a =	0;
+//const int cylinder_b =	1;
+//const int cylinder_c =	2;
 const int cylinder_d =	3;
 
 const int color_a =		0;
@@ -129,6 +129,7 @@ vec4 get_distance_with_color( vec3 p )
 	// ---------------------- SHAPE 1: Sphere (Color A) ----------------------
 	float obj01 = 	signedDistanceSphere( p, translate[sphere_a], sphere_size );
 	Result res01 =	Result( obj01, colors[color_a] );
+	
 	// ---------------------- SHAPE 2: Cube (Color B) ------------------------
 	// 1. Localize p to the cube's center and add translation
 	vec3 cube_p = p - translate[cube_b];
@@ -156,7 +157,6 @@ vec4 get_distance_with_color( vec3 p )
 											cylinder_dimensions.x,
 											cylinder_dimensions.y );
 	Result res04 =	Result( obj04, colors[color_d] );
-
 	
 	// -------------------- COMBINATION (Hierarchical) ----------------------
 	// 1. Combine Sphere (res1) and Cube (res2) using the 'weight' uniform

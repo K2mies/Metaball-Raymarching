@@ -21,7 +21,7 @@ uniform float		cylinder_rotation_amount =	0.f;
 uniform float		cube_size =					1.f;
 uniform float		sphere_size =				1.f;
 uniform vec2		torus_radii = 				vec2( 1.5f, .5f );
-uniform vec2		cylinder_dimensions =		vec2( 1.f, 2.f);
+uniform vec2		cylinder_dimensions =		vec2( 1.f, 2.f );
 
 uniform float	weight;
 

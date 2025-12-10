@@ -9,24 +9,24 @@ render_mode unshaded;
 uniform vec3		translate[4];
 uniform vec3		colors[4];
 
-uniform vec3		cube_rotation_axis =			vec3( 0.f, 1.f, 0.f );
-uniform float	cube_rotation_amount =		0.f;
+uniform vec3		cube_rotation_axis =		vec3( 0.f, 1.f, 0.f );
+uniform float		cube_rotation_amount =		0.f;
 
 uniform vec3		torus_rotation_axis =		vec3( 0.f, 1.f, 0.f );
-uniform float	torus_rotation_amount =		0.f;
+uniform float		torus_rotation_amount =		0.f;
 
-uniform vec3		cylinder_rotation_axis =		vec3( 0.f, 1.f, 0.f );
-uniform float	cylinder_rotation_amount =	0.f;
+uniform vec3		cylinder_rotation_axis =	vec3( 0.f, 1.f, 0.f );
+uniform float		cylinder_rotation_amount =	0.f;
 
-uniform float	cube_size =					1.f;
-uniform float	sphere_size =				1.f;
+uniform float		cube_size =					1.f;
+uniform float		sphere_size =				1.f;
 uniform vec2		torus_radii = 				vec2( 1.5f, .5f );
 uniform vec2		cylinder_dimensions =		vec2( 1.f, 2.f);
 
 uniform float	weight;
 
 // ------------------------------------------------------------------- variables
-const int	MAX_STEPS = 			300;
+const int	MAX_STEPS = 		300;
 const float MAX_DISTANCE =		1000.f;
 const float MIN_DISTANCE =		0.001f;
 
@@ -37,7 +37,7 @@ const int sphere_a =		0;
 //const int sphere_d =		3;
 
 //const int cube_a =		0;
-const int cube_b =		1;
+const int cube_b =			1;
 //const int cube_c =		2;
 //const int cube_d =		3;
 
@@ -49,18 +49,18 @@ const int torus_c = 		2;
 //const int cylinder_a =	0;
 //const int cylinder_b =	1;
 //const int cylinder_c =	2;
-const int cylinder_d =	3;
+const int cylinder_d =		3;
 
-const int color_a =		0;
-const int color_b =		1;
-const int color_c =		2;
-const int color_d =		3;
+const int color_a =			0;
+const int color_b =			1;
+const int color_c =			2;
+const int color_d =			3;
 
 // -------------------------------------------------------------------- structs
 struct Result
 {
 	float 	dist;
-	vec3		color;
+	vec3	color;
 };
 
 // ------------------------------------------------------ signed distance fields
@@ -73,7 +73,7 @@ float signedDistanceCube( vec3 p, vec3 centre, vec3 size )
 {
 	vec3 offset = abs( p - centre ) - size;
 	// distance from point outside box to edge (0 if inside box)
-	float unsignedDistance =		length( max( offset, 0.f ) );
+	float unsignedDistance =	length( max( offset, 0.f ) );
 	// distance from point inside box to edge (0 if outside box)
 	float distanceInsideBox =	min( max( offset.x, max( offset.y, offset.z ) ), 0.0 );
 	return unsignedDistance +	distanceInsideBox;
@@ -161,8 +161,10 @@ vec4 get_distance_with_color( vec3 p )
 	// -------------------- COMBINATION (Hierarchical) ----------------------
 	// 1. Combine Sphere (res1) and Cube (res2) using the 'weight' uniform
 	Result combined_SC =		smooth_min( res01, res02, weight );
+
 	// 2. Combine Blended SC (combined_SC) and Torus (res3)
 	Result combined_SCT =	smooth_min( combined_SC, res03, weight );
+
 	// 2. Combine Blended SCT (combined_SCT) and Cylinder (res3)
 	Result combined_SCTC =	smooth_min( combined_SCT, res04, weight );
 	
@@ -196,7 +198,7 @@ vec4 raymarch_color( vec3 ray_origin, vec3 ray_dir )
 	
 	for ( int i = 0; i < MAX_STEPS; i++ )
 	{
-		vec4 scene =		get_distance_with_color( p );
+		vec4 scene =	get_distance_with_color( p );
 		float d = 		scene.w;
 		vec3 col = 		scene.xyz;
 
@@ -224,7 +226,7 @@ void fragment()
 {
 	vec2 uv = SCREEN_UV * 2.f - 1.f;
 	
-	vec4 clip_position =		vec4( uv, 1.f, 1.f );
+	vec4 clip_position =	vec4( uv, 1.f, 1.f );
 	vec4 world_position =	INV_VIEW_MATRIX * INV_PROJECTION_MATRIX * clip_position;
 	
 	vec3 ray_end =			world_position.xyz / world_position.w;
@@ -234,5 +236,5 @@ void fragment()
 	vec4 col = raymarch_color( ray_origin, ray_direction );
 	
 	ALPHA =		col.a;
-	ALBEDO =		col.rgb;
+	ALBEDO =	col.rgb;
 }

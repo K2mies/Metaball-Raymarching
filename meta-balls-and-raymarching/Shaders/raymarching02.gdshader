@@ -6,8 +6,8 @@ render_mode unshaded;
 *																				*/
 
 // -------------------------------------------------------------------- uniforms
-uniform vec3		translate[3];
-uniform vec3		colors[3];
+uniform vec3		translate[4];
+uniform vec3		colors[4];
 
 uniform vec3		cube_rotation_axis =			vec3( 0.f, 1.f, 0.f );
 uniform float	cube_rotation_amount =		0.f;
@@ -15,9 +15,13 @@ uniform float	cube_rotation_amount =		0.f;
 uniform vec3		torus_rotation_axis =		vec3( 0.f, 1.f, 0.f );
 uniform float	torus_rotation_amount =		0.f;
 
+uniform vec3		cylinder_rotation_axis =		vec3( 0.f, 1.f, 0.f );
+uniform float	cylinder_rotation_amount =	0.f;
+
 uniform float	cube_size =					1.f;
 uniform float	sphere_size =				1.f;
 uniform vec2		torus_radii = 				vec2( 1.5f, .5f );
+uniform vec2		cylinder_dimensions =		vec2( 1.f, 2.f);
 
 uniform float	weight;
 
@@ -30,18 +34,27 @@ const float MIN_DISTANCE =		0.001f;
 const int sphere_a =		0;
 const int sphere_b =		1;
 const int sphere_c =		2;
+const int sphere_d =		3;
 
 const int cube_a =		0;
 const int cube_b =		1;
 const int cube_c =		2;
+const int cube_d =		3;
 
 const int torus_a =		0;
 const int torus_b =		1;
 const int torus_c = 		2;
+const int torus_d = 		3;
+
+const int cylinder_a =	0;
+const int cylinder_b =	1;
+const int cylinder_c =	2;
+const int cylinder_d =	3;
 
 const int color_a =		0;
 const int color_b =		1;
 const int color_c =		2;
+const int color_d =		3;
 
 // -------------------------------------------------------------------- structs
 struct Result
@@ -70,6 +83,12 @@ float signedDistanceTorus( vec3 p, vec2 t )
 {
 	vec2 q = vec2( length( p.xz ) -t.x, p.y );
 	return length( q ) -t.y;
+}
+
+float signedDistanceCylinder( vec3 p, float r, float h )
+{
+	vec2 d = abs( vec2( length( p.xz ), p.y ) ) - vec2( r, h );
+	return min( max( d.x, d.y ), 0.f ) + length( max( d, 0.f ) );
 }
 
 // ------------------------------------------------------- transformation matrix
@@ -122,19 +141,32 @@ vec4 get_distance_with_color( vec3 p )
 
 	// ---------------------- SHAPE 3: Torus (Color C) -----------------------
 	// Translate the torus to its position
-	vec3 torus_p = p -translate[torus_c];
+	vec3 torus_p = p - translate[torus_c];
 	torus_p = 		rotate( torus_p, normalize( torus_rotation_axis ),
 												torus_rotation_amount * TIME);
 	float obj03 =	signedDistanceTorus( torus_p, torus_radii );
 	Result res03 =	Result( obj03, colors[color_c] );
 	
+	// ---------------------- SHAPE 4: Cylinder (Color D) --------------------
+	vec3 cylinder_p = p - translate[cylinder_d];
+	cylinder_p =		rotate( cylinder_p, normalize( cylinder_rotation_axis ),
+													cylinder_rotation_amount * TIME);
+	
+	float obj04 =	signedDistanceCylinder( cylinder_p,
+											cylinder_dimensions.x,
+											cylinder_dimensions.y );
+	Result res04 =	Result( obj04, colors[color_d] );
+
+	
 	// -------------------- COMBINATION (Hierarchical) ----------------------
 	// 1. Combine Sphere (res1) and Cube (res2) using the 'weight' uniform
 	Result combined_SC =		smooth_min( res01, res02, weight );
 	// 2. Combine Blended SC (combined_SC) and Torus (res3)
-	Result final_result =	smooth_min( combined_SC, res03, weight);
+	Result combined_SCT =	smooth_min( combined_SC, res03, weight );
+	// 2. Combine Blended SCT (combined_SCT) and Cylinder (res3)
+	Result combined_SCTC =	smooth_min( combined_SCT, res04, weight );
 	
-	return vec4( final_result.color, final_result.dist );
+	return vec4( combined_SCTC.color, combined_SCTC.dist );
 }
 
 float get_distance( vec3 p )

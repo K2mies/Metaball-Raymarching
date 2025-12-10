@@ -160,7 +160,7 @@ vec4 get_distance_with_color( vec3 p )
 	
 	// -------------------- COMBINATION (Hierarchical) ----------------------
 	// 1. Combine Sphere (res1) and Cube (res2) using the 'weight' uniform
-	Result combined_SC =		smooth_min( res01, res02, weight );
+	Result combined_SC =	smooth_min( res01, res02, weight );
 
 	// 2. Combine Blended SC (combined_SC) and Torus (res3)
 	Result combined_SCT =	smooth_min( combined_SC, res03, weight );

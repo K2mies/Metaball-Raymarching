@@ -9,10 +9,10 @@ render_mode unshaded;
 uniform vec3		translate[4];
 uniform vec3		colors[4];
 
+uniform float		light_brightness;
 uniform vec3		light_position;
 uniform vec4		light_color;
 uniform vec3		ambient_color;
-uniform float		light_brightness;
 
 uniform vec3		cube_rotation_axis =		vec3( 0.f, 1.f, 0.f );
 uniform float		cube_rotation_amount =		0.f;
@@ -73,7 +73,7 @@ struct	Light
 	vec3		position;
 	float		brightness;
 	vec3		ambient;
-	vec3		color;	
+	vec4		color;	
 };
 
 // ------------------------------------------------------ signed distance fields
@@ -205,17 +205,25 @@ vec3 get_normal( vec3 p )
 // ----------------------------------------------------------------- get lambert
 vec3	 get_lambert( vec3 hit_point, vec3 normal )
 {
+	//create and asign the light object
+	//(this is so you can create multiple lights later if needed)
+	Light light00;
+	light00.position = 		light_position;
+	light00.color = 		light_color;
+	light00.brightness = 	light_brightness;
+	light00.ambient = 		ambient_color;
+	
 	// Vector from the hit point to the light source, normalized.
-	vec3	direction = normalize( light_position - hit_point );
+	vec3 direction =	normalize( light00.position - hit_point );
 	
 	// The Lambertian contribution is the dot product of the Normal (N) and Light Direction (L).
     // clamp() or max(0.0, ...) ensures we only light surfaces facing the light (no negative light).
-	float diffuse = max( 0.f, dot( normal, direction ) );
+	float diffuse =		max( 0.f, dot( normal, direction ) );
 	
 	// put it all together
-	vec3 final_light_color = ambient_color * light_color.rgb * diffuse * light_brightness;
+	vec3 output = light00.ambient * light00.color.rgb * diffuse * light00.brightness;
 	
-	return final_light_color;
+	return output;
 }
 
 // --------------------------------------------------------- colored raymarching
@@ -233,15 +241,18 @@ vec4 raymarch_color( vec3 ray_origin, vec3 ray_dir )
 
 		if( abs( d ) < MIN_DISTANCE )
 		{
+			//get hit
 			vec3 hit_point = p;
+			
+			//get each channel
 			vec3 normal =	get_normal( p ) * .5f + .5f;
-			vec3 lambert = get_lambert(hit_point, normal);
+			vec3 lambert =	get_lambert(hit_point, normal);
 			
 			//normalize the layers by deviding by the total 
 			//amount of layes
-			col = 		col / 3.f;
-			normal =	normal / 3.f;
-			lambert =	lambert / 3.f;
+			col = 		col 	/ 3.f;
+			normal =	normal	/ 3.f;
+			lambert =	lambert	/ 3.f;
 			
 			//add to vec4 (makes a difference to do it here)
 			vec4 normal4 =		vec4(normal, 1.f);

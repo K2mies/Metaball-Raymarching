@@ -257,7 +257,7 @@ vec3 get_reflection( vec3 hit_point, vec3 normal, vec3 view_direction)
 	// 1. Calculate the Reflection Vector (R)
 	vec3 R = reflect( V, normal );
 	
-	// 2. Sample the Cubemap
+	// 2. Sample the Cubemap/HDRI texture
 	vec3 reflected_color = sample( R );
 	
 	return reflected_color;

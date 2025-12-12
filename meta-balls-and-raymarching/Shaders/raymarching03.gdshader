@@ -6,7 +6,6 @@ render_mode unshaded;
 *																				*/
 
 // -------------------------------------------------------------------- uniforms
-//uniform samplerCube		environment_cubemap;
 uniform	sampler2D	reflection_texture;
 
 uniform float		normal_strength = .1f;

@@ -6,6 +6,12 @@ render_mode unshaded;
 *																				*/
 
 // -------------------------------------------------------------------- uniforms
+uniform samplerCube		environment_cubemap;
+
+uniform float		normal_strength = .1f;
+uniform float		lambert_strength = .5f;
+uniform float		reflect_strength = .5f;
+
 uniform vec3		translate[4];
 uniform vec3		colors[4];
 
@@ -226,8 +232,24 @@ vec3	 get_lambert( vec3 hit_point, vec3 normal )
 	return output;
 }
 
+// -------------------------------------------------------------- get reflection
+vec3 get_reflection( vec3 hit_point, vec3 normal, vec3 view_direction)
+{
+	// The view direction is the incoming ray direction (ray_dir)
+	vec3 V = view_direction;
+	
+	// 1. Calculate the Reflection Vector (R)
+	vec3 R = reflect(V, normal);
+	
+	// 2. Sample the Cubemap
+	vec3 reflected_color = texture( environment_cubemap, R).rgb;
+	
+	return reflected_color;
+}
+
+
 // --------------------------------------------------------- colored raymarching
-vec4 raymarch_color( vec3 ray_origin, vec3 ray_dir )
+vec4 raymarch_color( vec3 ray_origin, vec3 ray_direction )
 {
 	float	t = 0.f;
 	vec3	p = ray_origin;
@@ -245,22 +267,28 @@ vec4 raymarch_color( vec3 ray_origin, vec3 ray_dir )
 			vec3 hit_point = p;
 			
 			//get each channel
-			vec3 normal =	get_normal( p ) * .5f + .5f;
-			vec3 lambert =	get_lambert(hit_point, normal);
+			vec3 normal =		get_normal( p ) * .5f + .5f;
+			vec3 lambert =		get_lambert(hit_point, normal);
+			vec3 reflection =	get_reflection(hit_point, normal, ray_direction);
 			
 			//normalize the layers by deviding by the total 
 			//amount of layes
-			col = 		col 	/ 3.f;
-			normal =	normal	/ 3.f;
-			lambert =	lambert	/ 3.f;
+			col = 			col 		/ 4.f;
+			normal =		normal		/ 4.f;
+			lambert =		lambert		/ 4.f;
+			reflection =	reflection	/ 4.f;
 			
 			//add to vec4 (makes a difference to do it here)
+			vec4 color4 =		vec4(col, 1.f);
 			vec4 normal4 =		vec4(normal, 1.f);
 			vec4 lambert4 =		vec4(lambert, 1.f);
-			vec4 color4 =		vec4(col, 1.f);
+			vec4 reflection4 =	vec4(reflection, 1.f);
 			
-			vec4 output = mix(color4, lambert4, .5f);
-			output = mix(output, normal4, .1f);
+			vec4 output = mix(color4, lambert4, lambert_strength);
+			output = mix(output, normal4, normal_strength);
+			output = mix(output, reflection4, reflect_strength);
+			
+			//vec4 output = reflection4;
 			
 			return output;
 		}
@@ -268,7 +296,7 @@ vec4 raymarch_color( vec3 ray_origin, vec3 ray_dir )
 			break;
 		
 		t += d;	
-		p += d * ray_dir;
+		p += d * ray_direction;
 	}
 	return vec4( 0.f );
 }

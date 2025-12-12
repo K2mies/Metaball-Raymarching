@@ -1,7 +1,6 @@
-[gd_scene load_steps=12 format=3 uid="uid://buuwjdk6jiu2w"]
+[gd_scene load_steps=7 format=3 uid="uid://buuwjdk6jiu2w"]
 
 [ext_resource type="Shader" uid="uid://cwe1n4gpjo2ef" path="res://Shaders/raymarching03.gdshader" id="1_8cxp4"]
-[ext_resource type="Script" uid="uid://dik5m2f5wtjo8" path="res://Scripts/ray_marcher00.gd" id="2_mn5x2"]
 [ext_resource type="Texture2D" uid="uid://bulsxxlp4o6h2" path="res://textures/Cube_texture00.jpg" id="3_1oews"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_2n30t"]
@@ -33,15 +32,13 @@ material = SubResource("ShaderMaterial_2n30t")
 custom_aabb = AABB(1, 1, 1, 1, 0, 0)
 size = Vector2(3.94, 2)
 
-[sub_resource type="Cubemap" id="Cubemap_mn5x2"]
-
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_8cxp4"]
 render_priority = 0
 shader = ExtResource("1_8cxp4")
-shader_parameter/environment_cubemap = SubResource("Cubemap_mn5x2")
-shader_parameter/normal_strength = 0.3
-shader_parameter/lambert_strength = 0.1
-shader_parameter/reflect_strength = 0.4
+shader_parameter/reflection_texture = ExtResource("3_1oews")
+shader_parameter/normal_strength = 0.1
+shader_parameter/lambert_strength = 0.5
+shader_parameter/reflect_strength = 0.5
 shader_parameter/translate = PackedVector3Array(-1.35, 0, 0, -0.51, 0, 0, 1.36, 0, 0, 0.41, 0, 0)
 shader_parameter/colors = PackedVector3Array(-2, 0, 0, 1.51, 0.96, -0.5, -0.12, 0, 0, -2.14, 1.36, 0.06)
 shader_parameter/light_brightness = 1.0
@@ -64,17 +61,6 @@ shader_parameter/weight = 0.33
 material = SubResource("ShaderMaterial_8cxp4")
 size = Vector3(3.6, 2, 1.21)
 
-[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_pdkp2"]
-panorama = ExtResource("3_1oews")
-energy_multiplier = 3.14
-
-[sub_resource type="Sky" id="Sky_uc24v"]
-sky_material = SubResource("PanoramaSkyMaterial_pdkp2")
-
-[sub_resource type="Environment" id="Environment_a8xe0"]
-background_mode = 2
-sky = SubResource("Sky_uc24v")
-
 [node name="Node3D" type="Node3D"]
 
 [node name="RayMarcher2D" type="MeshInstance3D" parent="."]
@@ -84,10 +70,6 @@ mesh = SubResource("QuadMesh_ycva1")
 
 [node name="RayMarcher3D" type="MeshInstance3D" parent="."]
 mesh = SubResource("BoxMesh_fgp7r")
-script = ExtResource("2_mn5x2")
 
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.563)
-
-[node name="WorldEnvironment" type="WorldEnvironment" parent="." groups=["Environment"]]
-environment = SubResource("Environment_a8xe0")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.843)

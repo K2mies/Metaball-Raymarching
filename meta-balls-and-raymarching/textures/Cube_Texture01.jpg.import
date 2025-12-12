@@ -2,8 +2,8 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bulsxxlp4o6h2"
-path.bptc="res://.godot/imported/Cube_texture00.jpg-3ba529dd0e2f89df1ba5830092f35864.bptc.ctex"
+uid="uid://cmstys2tlfce3"
+path.s3tc="res://.godot/imported/Cube_Texture01.jpg-8712919c7a6a2e0fe720b588693b667f.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -11,13 +11,13 @@ metadata={
 
 [deps]
 
-source_file="res://textures/Cube_texture00.jpg"
-dest_files=["res://.godot/imported/Cube_texture00.jpg-3ba529dd0e2f89df1ba5830092f35864.bptc.ctex"]
+source_file="res://textures/Cube_Texture01.jpg"
+dest_files=["res://.godot/imported/Cube_Texture01.jpg-8712919c7a6a2e0fe720b588693b667f.s3tc.ctex"]
 
 [params]
 
 compress/mode=2
-compress/high_quality=true
+compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0
 compress/rdo_quality_loss=0.0

@@ -6,7 +6,8 @@ render_mode unshaded;
 *																				*/
 
 // -------------------------------------------------------------------- uniforms
-uniform samplerCube		environment_cubemap;
+//uniform samplerCube		environment_cubemap;
+uniform	sampler2D	reflection_texture;
 
 uniform float		normal_strength = .1f;
 uniform float		lambert_strength = .5f;
@@ -233,6 +234,22 @@ vec3	 get_lambert( vec3 hit_point, vec3 normal )
 }
 
 // -------------------------------------------------------------- get reflection
+
+vec3 equ_sample(vec3 r)
+{
+	float longitude = atan(r.x, r.z);
+	float latitude = acos(clamp(r.y, -1.f, 1.f));
+	
+	//Normalization to uv coordinates
+	longitude = (longitude + 3.14159265359) / (2.0 * 3.14159265359);
+	latitude = latitude / 3.14159265359;
+	
+	vec2 uv = vec2(longitude, latitude);
+	
+	//Sample the panoramic texture
+	return texture(reflection_texture, uv).xyz;
+}
+
 vec3 get_reflection( vec3 hit_point, vec3 normal, vec3 view_direction)
 {
 	// The view direction is the incoming ray direction (ray_dir)
@@ -242,11 +259,11 @@ vec3 get_reflection( vec3 hit_point, vec3 normal, vec3 view_direction)
 	vec3 R = reflect(V, normal);
 	
 	// 2. Sample the Cubemap
-	vec3 reflected_color = texture( environment_cubemap, R).rgb;
+	//vec3 reflected_color = texture( environment_cubemap, R).rgb;
+	vec3 reflected_color = equ_sample(R);
 	
 	return reflected_color;
 }
-
 
 // --------------------------------------------------------- colored raymarching
 vec4 raymarch_color( vec3 ray_origin, vec3 ray_direction )

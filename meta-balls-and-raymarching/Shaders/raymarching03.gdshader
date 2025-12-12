@@ -235,19 +235,19 @@ vec3	 get_lambert( vec3 hit_point, vec3 normal )
 
 // -------------------------------------------------------------- get reflection
 
-vec3 equ_sample(vec3 r)
+vec3 sample( vec3 r )
 {
-	float longitude = atan(r.x, r.z);
-	float latitude = acos(clamp(r.y, -1.f, 1.f));
+	float longitude =	atan( r.x, r.z );
+	float latitude =	acos( clamp( r.y, -1.f, 1.f ) );
 	
 	//Normalization to uv coordinates
-	longitude = (longitude + 3.14159265359) / (2.0 * 3.14159265359);
-	latitude = latitude / 3.14159265359;
+	longitude =	( longitude + 3.14159265359 ) / ( 2.0 * 3.14159265359 );
+	latitude =	latitude / 3.14159265359;
 	
-	vec2 uv = vec2(longitude, latitude);
+	vec2 uv = vec2( longitude, latitude );
 	
 	//Sample the panoramic texture
-	return texture(reflection_texture, uv).xyz;
+	return texture( reflection_texture, uv ).xyz;
 }
 
 vec3 get_reflection( vec3 hit_point, vec3 normal, vec3 view_direction)
@@ -256,11 +256,11 @@ vec3 get_reflection( vec3 hit_point, vec3 normal, vec3 view_direction)
 	vec3 V = view_direction;
 	
 	// 1. Calculate the Reflection Vector (R)
-	vec3 R = reflect(V, normal);
+	vec3 R = reflect( V, normal );
 	
 	// 2. Sample the Cubemap
 	//vec3 reflected_color = texture( environment_cubemap, R).rgb;
-	vec3 reflected_color = equ_sample(R);
+	vec3 reflected_color = sample( R );
 	
 	return reflected_color;
 }

@@ -146,36 +146,36 @@ Result smooth_min( Result a, Result b, float smooth_weight )
 vec4 get_distance_with_color( vec3 p )
 {
 	// ---------------------- SHAPE 1: Sphere (Color A) ----------------------
-	float obj01 	= 	signedDistanceSphere( p, translate[sphere_a], sphere_size );
-	Result res01	=	Result( obj01, colors[color_a] );
+	float	obj01 	= 	signedDistanceSphere( p, translate[sphere_a], sphere_size );
+	Result	res01	=	Result( obj01, colors[color_a] );
 	
 	// ---------------------- SHAPE 2: Cube (Color B) ------------------------
 	// 1. Localize p to the cube's center and add translation
-	vec3 cube_p 	=	p - translate[cube_b];
+	vec3	cube_p 	=	p - translate[cube_b];
 	// We rotate around axies based on TIME
 	cube_p			= 	rotate( cube_p, normalize( cube_rotation_axis ),
 												cube_rotation_amount * TIME );
-	vec3 size		=	vec3( cube_size );
-	float obj02		=	signedDistanceCube( cube_p, vec3( 0.f ), size );
-	Result res02	=	Result( obj02, colors[color_b] );
+	vec3	size	=	vec3( cube_size );
+	float	obj02	=	signedDistanceCube( cube_p, vec3( 0.f ), size );
+	Result	res02	=	Result( obj02, colors[color_b] );
 
 	// ---------------------- SHAPE 3: Torus (Color C) -----------------------
 	// Translate the torus to its position
-	vec3 torus_p 	=	p - translate[torus_c];
+	vec3	torus_p =	p - translate[torus_c];
 	torus_p			= 	rotate( torus_p, normalize( torus_rotation_axis ),
 												torus_rotation_amount * TIME);
-	float obj03		=	signedDistanceTorus( torus_p, torus_radii );
-	Result res03	=	Result( obj03, colors[color_c] );
+	float	obj03	=	signedDistanceTorus( torus_p, torus_radii );
+	Result	res03	=	Result( obj03, colors[color_c] );
 	
 	// ---------------------- SHAPE 4: Cylinder (Color D) --------------------
-	vec3 cylinder_p = p - translate[cylinder_d];
-	cylinder_p		=	rotate( cylinder_p, normalize( cylinder_rotation_axis ),
+	vec3	cylinder_p	=	p - translate[cylinder_d];
+	cylinder_p			=	rotate( cylinder_p, normalize( cylinder_rotation_axis ),
 												cylinder_rotation_amount * TIME);
 	
-	float obj04		=	signedDistanceCylinder( cylinder_p,
+	float	obj04		=	signedDistanceCylinder( cylinder_p,
 											cylinder_dimensions.x,
 											cylinder_dimensions.y );
-	Result res04	=	Result( obj04, colors[color_d] );
+	Result	res04		=	Result( obj04, colors[color_d] );
 	
 	// -------------------- COMBINATION (Hierarchical) ----------------------
 	// 1. Combine Sphere (res1) and Cube (res2) using the 'weight' uniform

@@ -9,6 +9,11 @@ render_mode unshaded;
 uniform vec3		translate[4];
 uniform vec3		colors[4];
 
+uniform vec3		light_position;
+uniform vec4		light_color;
+uniform vec3		ambient_color;
+uniform float		light_brightness;
+
 uniform vec3		cube_rotation_axis =		vec3( 0.f, 1.f, 0.f );
 uniform float		cube_rotation_amount =		0.f;
 
@@ -61,6 +66,14 @@ struct	Result
 {
 	float 	dist;
 	vec3	color;
+};
+
+struct	Light
+{
+	vec3		position;
+	float		brightness;
+	vec3		ambient;
+	vec3		color;	
 };
 
 // ------------------------------------------------------ signed distance fields
@@ -189,28 +202,56 @@ vec3 get_normal( vec3 p )
 	return normalize( n );
 }
 
+// ----------------------------------------------------------------- get lambert
+vec3	 get_lambert( vec3 hit_point, vec3 normal )
+{
+	// Vector from the hit point to the light source, normalized.
+	vec3	direction = normalize( light_position - hit_point );
+	
+	// The Lambertian contribution is the dot product of the Normal (N) and Light Direction (L).
+    // clamp() or max(0.0, ...) ensures we only light surfaces facing the light (no negative light).
+	float diffuse = max( 0.f, dot( normal, direction ) );
+	
+	// put it all together
+	vec3 final_light_color = ambient_color * light_color.rgb * diffuse * light_brightness;
+	
+	return final_light_color;
+}
+
 // --------------------------------------------------------- colored raymarching
 vec4 raymarch_color( vec3 ray_origin, vec3 ray_dir )
 {
 	float	t = 0.f;
-	vec3		p = ray_origin;
+	vec3	p = ray_origin;
 	int		i = 0;
 	
 	for ( int i = 0; i < MAX_STEPS; i++ )
 	{
-		vec4 scene =		get_distance_with_color( p );
+		vec4 scene =	get_distance_with_color( p );
 		float d = 		scene.w;
 		vec3 col = 		scene.xyz;
 
 		if( abs( d ) < MIN_DISTANCE )
 		{
-			//here we mix the color channel with the normal channel for effect
+			vec3 hit_point = p;
 			vec3 normal =	get_normal( p ) * .5f + .5f;
+			vec3 lambert = get_lambert(hit_point, normal);
 			
-			vec4 normal4 =	vec4( normal, 1.f );
-			vec4 col4 =		vec4( col, 1.f );
+			//normalize the layers by deviding by the total 
+			//amount of layes
+			col = 		col / 3.f;
+			normal =	normal / 3.f;
+			lambert =	lambert / 3.f;
 			
-			return mix( normal4, col4, .5f );
+			//add to vec4 (makes a difference to do it here)
+			vec4 normal4 =		vec4(normal, 1.f);
+			vec4 lambert4 =		vec4(lambert, 1.f);
+			vec4 color4 =		vec4(col, 1.f);
+			
+			vec4 output = mix(color4, lambert4, .5f);
+			output = mix(output, normal4, .1f);
+			
+			return output;
 		}
 		if( t > MAX_DISTANCE )
 			break;

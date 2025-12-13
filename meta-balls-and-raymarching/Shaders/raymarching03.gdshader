@@ -12,15 +12,13 @@ uniform float		normal_strength		= .1f;
 uniform float		lambert_strength		= .5f;
 uniform float		reflect_strength		= .5f;
 uniform float		fresnel_strength		= .5f;
-//uniform float		glossiness			= .5f;
 
-uniform float 		fresnel_exponent 	: hint_range(0.1, 10.0, 0.1) 	= 2.0;
-uniform vec3 		fresnel_color 		: source_color 					= vec3(1.f); // Magenta rim color
-uniform float 		fresnel_intensity 	: hint_range(0.0, 5.0, 0.1) 		= 1.0;
-//uniform float		rim_power		: hint_range(1.f, 10.f, .1f)		=	3.f;
-//uniform float		fresnel_bias		: hint_range(0.f, 1.f, 0.01f)	=	.1f;
-//uniform vec3			rim_color		: source_color	=	vec3(1.f);
-//uniform float 		rim_amount 		: hint_range(0.f, 5.f, 0.1f) 	=	1.f;
+uniform vec3 		fresnel_color 			: source_color 					=	vec3(1.f); 
+uniform float 		fresnel_min_reflectance : hint_range(0.f, 1.f, .01f) 	= 	.05f;
+uniform float 		fresnel_exponent 		: hint_range(.1f, 10.f, .1f) 	= 	2.f;
+uniform float 		fresnel_intensity 		: hint_range(0.f, 20.f, .1f) 	= 	1.f;
+uniform float 		rim_start_threshold 		: hint_range(0.f, 1.f, .01f) 	= 	.5f;
+uniform float 		rim_softness_width 		: hint_range(.001f, .5f, .001f) 	= 	.01f;
 
 uniform vec3			translate[4];
 uniform vec3			colors[4];
@@ -178,14 +176,14 @@ vec4 get_distance_with_color( vec3 p )
 	Result	res03	=	Result( obj03, colors[color_c] );
 	
 	// ---------------------- SHAPE 4: Cylinder (Color D) --------------------
-	vec3	cylinder_p		=	p - translate[cylinder_d];
-	cylinder_p			=	rotate( cylinder_p, normalize( cylinder_rotation_axis ),
+	vec3	cylinder_p	=	p - translate[cylinder_d];
+	cylinder_p		=	rotate( cylinder_p, normalize( cylinder_rotation_axis ),
 												cylinder_rotation_amount * TIME);
 	
-	float	obj04		=	signedDistanceCylinder( cylinder_p,
-											cylinder_dimensions.x,
-											cylinder_dimensions.y );
-	Result	res04		=	Result( obj04, colors[color_d] );
+	float	obj04	=	signedDistanceCylinder( cylinder_p,
+									cylinder_dimensions.x,
+									cylinder_dimensions.y );
+	Result	res04	=	Result( obj04, colors[color_d] );
 	
 	// -------------------- COMBINATION (Hierarchical) ----------------------
 	// 1. Combine Sphere (res1) and Cube (res2) using the 'weight' uniform
@@ -243,7 +241,6 @@ vec3	 get_lambert( vec3 hit_point, vec3 normal )
 }
 
 // -------------------------------------------------------------- get reflection
-
 vec3 sample( vec3 r )
 {
 	float longitude	=	atan( r.x, r.z );
@@ -274,74 +271,34 @@ vec3 get_reflection( vec3 hit_point, vec3 normal, vec3 view_direction)
 }
 
 // ----------------------------------------------------------------- get fresnel
-
-vec3 get_fresnel(vec3 normal, vec3 view_direction)
+float get_schlick( vec3 normal, vec3 view_vec, float fresnel_min )
 {
-	vec3 N = normal;
-	vec3 rd = view_direction;
+	float dot_product		= dot( normal, view_vec);
+	float absolute_value		= abs( dot_product );
+	float cos_theta			= clamp( absolute_value, 0.f, 1.f );
 	
-	float exponent = fresnel_exponent;
+	float power_term = pow( 1.f - cos_theta, fresnel_exponent );
 	
-	float fresnel = pow(clamp(1.f - dot(N,-rd), 0.f, 1.f), exponent);
-	vec3	 rim_color = fresnel_color;
+	float output = fresnel_min + ( 1.f - fresnel_min ) * power_term;
 	
-	vec3 output = rim_color * fresnel * fresnel_intensity;
 	return output;
 }
 
-//vec3 get_fresnel(vec3 light_direction, vec3 normal, vec3 view_direction, float diffuse_intensity)
-//{
-	//vec3 L	= normalize(light_direction);
-	//vec3 N	= normal;
-	//vec3 V	= normalize(view_direction);
-	//
-	//// --- 1. Calculate the Reflection Vector (r) ---
-	//vec3 r	= reflect(-L, N);
-	//
-	//// --- 2. Calculate Rim/Fresnel Factor (rimd) ---	
-	//float rimd = 1.f - dot(r, -V);
-	//rimd = clamp(rimd, 0.f, 1.f);
-	//
-	//// Apply the power to sharpen the highlight (rimPow -> rim_power)
-	//rimd = pow(rimd, rim_power);
-	//
-	//// --- 3. Final Fresnel Mix (frn) ---
-	//float frn = mix(fresnel_bias, 1.f, rimd);
-	//
-	//vec3 output = frn * rim_color * rim_amount * diffuse_intensity;
-	//
-	//return output;
-//}
-// ------------------------------------------------ calculate lighting and color
-//vec4 calculate_lighting_and_color(vec3 hit_point, vec3 material_color, vec3 ray_direction)
-//{
-	//// --- 1. Get Core Vectors ---
-	//vec3 N = get_normal(hit_point);
-	//vec3 V = ray_direction;
-	//vec3 L = normalize(light_position - hit_point);
-	//
-	//// --- 2. Calculate Light Components ---
-	//
-	//// a) Lambertian Light: returns total color contribution from the primary light
-	//vec3 lambert = get_lambert(hit_point, N);
-	//
-	//// b) Raw Diffuse Factor (needed for the rim intensity)
-	//float diffuse_factor = max(0.f, dot(N, L));
-	//
-	//// c) Fresnel/Rim Light Contribution
-	//vec3 fresnel = get_fresnel(L, N, V, diffuse_factor);
-	//
-	//// d) Environment Reflection (Specular)
-	//vec3 reflection = get_reflection(hit_point, N, V);
-	//
-	//// --- 3. Final Blending ---
-	//vec3 output = material_color * lambert;
-	//output += fresnel;
-	//output = mix(output, reflection, glossiness);
-	//output = clamp(output, 0.f, 1.5f);
-	//
-	//return vec4(output, 1.f);	
-//}
+vec3 get_fresnel( vec3 normal, vec3 view_vec )
+{
+	float fresnel_factor = get_schlick( normal, view_vec, fresnel_min_reflectance );
+	
+	float edge00 = rim_start_threshold;
+	float edge01 = rim_start_threshold + rim_softness_width;
+	
+	edge01 = clamp( edge01, 0.f, 1.f );
+	
+	float soft_fresnel_factor = smoothstep( edge00, edge01, fresnel_factor );
+	
+	vec3 output = fresnel_color * soft_fresnel_factor * fresnel_intensity;
+	
+	return output;
+}
 
 // --------------------------------------------------------- colored raymarching
 vec4 raymarch_color( vec3 ray_origin, vec3 ray_direction )
@@ -360,13 +317,14 @@ vec4 raymarch_color( vec3 ray_origin, vec3 ray_direction )
 		{
 			//get hit
 			vec3 hit_point = p;
-			vec3 light_direction = normalize(light_position - hit_point);
+			vec3 view_vec = -ray_direction;
 			
 			//get each channel
-			vec3 normal		=	get_normal( p ) * .5f + .5f;
-			vec3 lambert		=	get_lambert( hit_point, normal );
-			vec3 reflection	=	get_reflection( hit_point, normal, ray_direction );
-			vec3 fresnel		=	get_fresnel( normal, ray_direction );
+			vec3 normal			=	get_normal( p ) * .5f + .5f;
+			vec3 unit_normal		=	get_normal( p );
+			vec3 lambert			=	get_lambert( hit_point, normal );
+			vec3 reflection		=	get_reflection( hit_point, normal, ray_direction );
+			vec3 fresnel			=	get_fresnel( unit_normal, view_vec);
 			
 			//normalize the layers by deviding by the total 
 			//amount of layes

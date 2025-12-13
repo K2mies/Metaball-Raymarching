@@ -228,15 +228,19 @@ vec3	 get_lambert( vec3 hit_point, vec3 normal, vec3 col )
 	light00.ambient		= 	ambient_color;
 	
 	// Vector from the hit point to the light source, normalized.
-	vec3 direction	=	normalize( light00.position - hit_point );
+	vec3 direction		=	normalize( light00.position - hit_point );
 	
 	// The Lambertian contribution is the dot product of the Normal (N) and Light Direction (L).
     // clamp() or max(0.0, ...) ensures we only light surfaces facing the light (no negative light).
-	float diffuse	=	max( 0.f, dot( normal, direction ) );
+	float diffuse		=	max( 0.f, dot( normal, direction ) );
 
 	
 	// put it all together
-	vec3 output		=	light00.ambient * light00.color.rgb * diffuse * col * light00.brightness;
+	vec3 output			=	light00.ambient *
+							light00.color.rgb * 
+							diffuse * 
+							col * 
+							light00.brightness;
 	
 	return output;
 }

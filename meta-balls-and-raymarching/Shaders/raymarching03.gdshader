@@ -78,8 +78,8 @@ const int color_d =			3;
 // -------------------------------------------------------------------- structs
 struct	Result
 {
-	float 	dist;
-	vec3	color;
+	float 		dist;
+	vec3		color;
 };
 
 struct	Light

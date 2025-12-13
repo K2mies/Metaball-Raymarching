@@ -312,8 +312,8 @@ vec3 get_fresnel( vec3 normal, vec3 view_vec )
 vec4 calculate_light_and_color(vec3 p, vec3 ray_direction, vec3 col)
 {
 	//get hit
-	vec3 hit_point 		= p;
-	vec3 view_vec 		= -ray_direction;
+	vec3 hit_point 		= 	p;
+	vec3 view_vec 		= 	-ray_direction;
 			
 	//get each channel
 	vec3 normal			=	get_normal( p ) * .5f + .5f;

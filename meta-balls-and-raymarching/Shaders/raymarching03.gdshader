@@ -20,29 +20,29 @@ uniform float 		fresnel_intensity 				: hint_range(0.f, 20.f, .1f) 		= 	1.f;
 uniform float 		rim_start_threshold 			: hint_range(0.f, 1.f, .01f) 		= 	.5f;
 uniform float 		rim_softness_width 				: hint_range(.001f, .5f, .001f) 	= 	.01f;
 
-uniform vec3			translate[4];
-uniform vec3			colors[4];
+uniform vec3		translate[4];
+uniform vec3		colors[4];
 
-uniform float			light_brightness;
-uniform vec3			light_position;
-uniform vec4			light_color;
-uniform vec3			ambient_color;
+uniform float		light_brightness;
+uniform vec3		light_position;
+uniform vec4		light_color;
+uniform vec3		ambient_color;
 
-uniform vec3			cube_rotation_axis			=	vec3( 0.f, 1.f, 0.f );
-uniform float			cube_rotation_amount		=	0.f;
+uniform vec3		cube_rotation_axis				=	vec3( 0.f, 1.f, 0.f );
+uniform float		cube_rotation_amount			=	0.f;
 
-uniform vec3			torus_rotation_axis			=	vec3( 0.f, 1.f, 0.f );
-uniform float			torus_rotation_amount		=	0.f;
+uniform vec3		torus_rotation_axis				=	vec3( 0.f, 1.f, 0.f );
+uniform float		torus_rotation_amount			=	0.f;
 
-uniform vec3			cylinder_rotation_axis		=	vec3( 0.f, 1.f, 0.f );
-uniform float			cylinder_rotation_amount	=	0.f;
+uniform vec3		cylinder_rotation_axis			=	vec3( 0.f, 1.f, 0.f );
+uniform float		cylinder_rotation_amount		=	0.f;
 
-uniform float			cube_size					=	1.f;
-uniform float			sphere_size					=	1.f;
-uniform vec2			torus_radii					= 	vec2( 1.5f, .5f );
-uniform vec2			cylinder_dimensions			=	vec2( 1.f, 2.f );
+uniform float		cube_size						=	1.f;
+uniform float		sphere_size						=	1.f;
+uniform vec2		torus_radii						= 	vec2( 1.5f, .5f );
+uniform vec2		cylinder_dimensions				=	vec2( 1.f, 2.f );
 
-uniform float	weight;
+uniform float		weight;
 
 // ------------------------------------------------------------------- variables
 const int	MAX_STEPS		= 	300;

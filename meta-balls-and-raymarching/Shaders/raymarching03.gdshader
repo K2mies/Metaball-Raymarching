@@ -347,9 +347,9 @@ vec4 calculate_light_and_color(vec3 p, vec3 ray_direction, vec3 col)
 
 vec4 raymarch_color( vec3 ray_origin, vec3 ray_direction )
 {
-	float	t = 0.f;
-	vec3	p = ray_origin;
-	int		i = 0;
+	float	t 	=	0.f;
+	vec3	p 	=	ray_origin;
+	int		i 	=	0;
 	
 	for ( int i = 0; i < MAX_STEPS; i++ )
 	{

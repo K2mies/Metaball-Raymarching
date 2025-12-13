@@ -98,7 +98,7 @@ float signedDistanceSphere( vec3 p, vec3 centrum, float radius )
 
 float signedDistanceCube( vec3 p, vec3 centre, vec3 size )
 {
-	vec3 offset = abs( p - centre ) - size;
+	vec3 offset 				=	abs( p - centre ) - size;
 	// distance from point outside box to edge (0 if inside box)
 	float unsignedDistance	=	length( max( offset, 0.f ) );
 	// distance from point inside box to edge (0 if outside box)
@@ -121,7 +121,7 @@ float signedDistanceCylinder( vec3 p, float r, float h )
 // ------------------------------------------------------- transformation matrix
 vec3 rotate( vec3 v, vec3 axis, float angle )
 {
-	float s 	=	sin( angle );
+	float s 		=	sin( angle );
 	float c		=	cos( angle );
 	float oc	=	1.f - c;
 	
@@ -154,36 +154,36 @@ Result smooth_min( Result a, Result b, float smooth_weight )
 vec4 get_distance_with_color( vec3 p )
 {
 	// ---------------------- SHAPE 1: Sphere (Color A) ----------------------
-	float	obj01 	= 	signedDistanceSphere( p, translate[sphere_a], sphere_size );
-	Result	res01	=	Result( obj01, colors[color_a] );
+	float	obj01 			= 	signedDistanceSphere( p, translate[sphere_a], sphere_size );
+	Result	res01			=	Result( obj01, colors[color_a] );
 	
 	// ---------------------- SHAPE 2: Cube (Color B) ------------------------
 	// 1. Localize p to the cube's center and add translation
-	vec3	cube_p 		=	p - translate[cube_b];
+	vec3	cube_p 				=	p - translate[cube_b];
 	// We rotate around axies based on TIME
-	cube_p			= 	rotate( cube_p, normalize( cube_rotation_axis ),
+	cube_p					= 	rotate( cube_p, normalize( cube_rotation_axis ),
 												cube_rotation_amount * TIME );
-	vec3	size			=	vec3( cube_size );
-	float	obj02	=	signedDistanceCube( cube_p, vec3( 0.f ), size );
-	Result	res02	=	Result( obj02, colors[color_b] );
+	vec3	size					=	vec3( cube_size );
+	float	obj02			=	signedDistanceCube( cube_p, vec3( 0.f ), size );
+	Result	res02			=	Result( obj02, colors[color_b] );
 
 	// ---------------------- SHAPE 3: Torus (Color C) -----------------------
 	// Translate the torus to its position
-	vec3	torus_p 		=	p - translate[torus_c];
-	torus_p			= 	rotate( torus_p, normalize( torus_rotation_axis ),
+	vec3	torus_p 				=	p - translate[torus_c];
+	torus_p					= 	rotate( torus_p, normalize( torus_rotation_axis ),
 												torus_rotation_amount * TIME);
-	float	obj03	=	signedDistanceTorus( torus_p, torus_radii );
-	Result	res03	=	Result( obj03, colors[color_c] );
+	float	obj03			=	signedDistanceTorus( torus_p, torus_radii );
+	Result	res03			=	Result( obj03, colors[color_c] );
 	
 	// ---------------------- SHAPE 4: Cylinder (Color D) --------------------
-	vec3	cylinder_p	=	p - translate[cylinder_d];
-	cylinder_p		=	rotate( cylinder_p, normalize( cylinder_rotation_axis ),
+	vec3	cylinder_p			=	p - translate[cylinder_d];
+	cylinder_p				=	rotate( cylinder_p, normalize( cylinder_rotation_axis ),
 												cylinder_rotation_amount * TIME);
 	
-	float	obj04	=	signedDistanceCylinder( cylinder_p,
+	float	obj04			=	signedDistanceCylinder( cylinder_p,
 									cylinder_dimensions.x,
 									cylinder_dimensions.y );
-	Result	res04	=	Result( obj04, colors[color_d] );
+	Result	res04			=	Result( obj04, colors[color_d] );
 	
 	// -------------------- COMBINATION (Hierarchical) ----------------------
 	// 1. Combine Sphere (res1) and Cube (res2) using the 'weight' uniform
@@ -193,7 +193,7 @@ vec4 get_distance_with_color( vec3 p )
 	Result combined_SCT		=	smooth_min( combined_SC, res03, weight );
 
 	// 2. Combine Blended SCT (combined_SCT) and Cylinder (res3)
-	Result combined_SCTC	=	smooth_min( combined_SCT, res04, weight );
+	Result combined_SCTC		=	smooth_min( combined_SCT, res04, weight );
 	
 	return vec4( combined_SCTC.color, combined_SCTC.dist );
 }
@@ -217,7 +217,7 @@ vec3 get_normal( vec3 p )
 }
 
 // ----------------------------------------------------------------- get lambert
-vec3	 get_lambert( vec3 hit_point, vec3 normal )
+vec3	 get_lambert( vec3 hit_point, vec3 normal, vec3 col )
 {
 	//create and asign the light object
 	//(this is so you can create multiple lights later if needed)
@@ -233,9 +233,10 @@ vec3	 get_lambert( vec3 hit_point, vec3 normal )
 	// The Lambertian contribution is the dot product of the Normal (N) and Light Direction (L).
     // clamp() or max(0.0, ...) ensures we only light surfaces facing the light (no negative light).
 	float diffuse	=	max( 0.f, dot( normal, direction ) );
+
 	
 	// put it all together
-	vec3 output		=	light00.ambient * light00.color.rgb * diffuse * light00.brightness;
+	vec3 output		=	light00.ambient * light00.color.rgb * diffuse * col * light00.brightness;
 	
 	return output;
 }
@@ -247,8 +248,8 @@ vec3 sample( vec3 r )
 	float latitude	=	acos( clamp( r.y, -1.f, 1.f ) );
 	
 	//Normalization to uv coordinates
-	longitude	=	( longitude + 3.14159265359 ) / ( 2.0 * 3.14159265359 );
-	latitude		=	latitude / 3.14159265359;
+	longitude		=	( longitude + 3.14159265359 ) / ( 2.0 * 3.14159265359 );
+	latitude			=	latitude / 3.14159265359;
 	
 	vec2 uv = vec2( longitude, latitude );
 	
@@ -277,23 +278,25 @@ float get_schlick( vec3 normal, vec3 view_vec, float fresnel_min )
 	float absolute_value		= abs( dot_product );
 	float cos_theta			= clamp( absolute_value, 0.f, 1.f );
 	
-	float power_term = pow( 1.f - cos_theta, fresnel_exponent );
+	float power_term 		= pow( 1.f - cos_theta, fresnel_exponent );
 	
-	float output = fresnel_min + ( 1.f - fresnel_min ) * power_term;
+	float output 			= fresnel_min + ( 1.f - fresnel_min ) * power_term;
 	
 	return output;
 }
 
 vec3 get_fresnel( vec3 normal, vec3 view_vec )
 {
-	float fresnel_factor = get_schlick( normal, view_vec, fresnel_min_reflectance );
+	float fresnel_factor			= get_schlick(	normal,
+												view_vec,
+												fresnel_min_reflectance );
 	
-	float edge00 = rim_start_threshold;
-	float edge01 = rim_start_threshold + rim_softness_width;
+	float edge00 				= rim_start_threshold;
+	float edge01 				= rim_start_threshold + rim_softness_width;
 	
-	edge01 = clamp( edge01, 0.f, 1.f );
+	edge01 						= clamp( edge01, 0.f, 1.f );
 	
-	float soft_fresnel_factor = smoothstep( edge00, edge01, fresnel_factor );
+	float soft_fresnel_factor 	= smoothstep( edge00, edge01, fresnel_factor );
 	
 	vec3 output = fresnel_color * soft_fresnel_factor * fresnel_intensity;
 	
@@ -301,6 +304,43 @@ vec3 get_fresnel( vec3 normal, vec3 view_vec )
 }
 
 // --------------------------------------------------------- colored raymarching
+
+vec4 calculate_light_and_color(vec3 p, vec3 ray_direction, vec3 col)
+{
+	//get hit
+	vec3 hit_point = p;
+	vec3 view_vec = -ray_direction;
+			
+	//get each channel
+	vec3 normal			=	get_normal( p ) * .5f + .5f;
+	vec3 unit_normal		=	get_normal( p );
+	vec3 lambert			=	get_lambert( hit_point, normal, col );
+	vec3 reflection		=	get_reflection( hit_point, normal, ray_direction );
+	vec3 fresnel			=	get_fresnel( unit_normal, view_vec);
+			
+	//normalize the layers by deviding by the total 
+	//amount of layes
+	col					=	col 			/ 5.f;
+	normal				=	normal		/ 5.f;
+	lambert				=	lambert		/ 5.f;
+	reflection			=	reflection	/ 5.f;
+	fresnel				=	fresnel		/ 5.f;
+			
+	//add to vec4 (makes a difference to do it here)
+	vec4 color4			=	vec4( col,			1.f );
+	vec4 normal4			=	vec4( normal, 		1.f );
+	vec4 lambert4		=	vec4( lambert, 		1.f );
+	vec4 reflection4		=	vec4( reflection, 	1.f );
+	vec4 fresnel4		=	vec4( fresnel, 		1.f );
+			
+	vec4 output			=	mix( color4, lambert4,		lambert_strength );
+	output				=	mix( output, normal4,		normal_strength );
+	output				=	mix( output, reflection4,	reflect_strength );
+	output				=	mix( output, fresnel4,		fresnel_strength );
+			
+	return output;
+}
+
 vec4 raymarch_color( vec3 ray_origin, vec3 ray_direction )
 {
 	float	t = 0.f;
@@ -315,38 +355,8 @@ vec4 raymarch_color( vec3 ray_origin, vec3 ray_direction )
 
 		if( abs( d ) < MIN_DISTANCE )
 		{
-			//get hit
-			vec3 hit_point = p;
-			vec3 view_vec = -ray_direction;
-			
-			//get each channel
-			vec3 normal			=	get_normal( p ) * .5f + .5f;
-			vec3 unit_normal		=	get_normal( p );
-			vec3 lambert			=	get_lambert( hit_point, normal );
-			vec3 reflection		=	get_reflection( hit_point, normal, ray_direction );
-			vec3 fresnel			=	get_fresnel( unit_normal, view_vec);
-			
-			//normalize the layers by deviding by the total 
-			//amount of layes
-			col			=	col 			/ 5.f;
-			normal		=	normal		/ 5.f;
-			lambert		=	lambert		/ 5.f;
-			reflection	=	reflection	/ 5.f;
-			fresnel		=	fresnel		/ 5.f;
-			
-			//add to vec4 (makes a difference to do it here)
-			vec4 color4			=	vec4( col,			1.f );
-			vec4 normal4			=	vec4( normal, 		1.f );
-			vec4 lambert4		=	vec4( lambert, 		1.f );
-			vec4 reflection4		=	vec4( reflection, 	1.f );
-			vec4 fresnel4		=	vec4( fresnel, 		1.f );
-			
-			vec4 output			=	mix( color4, lambert4,		lambert_strength );
-			output				=	mix( output, normal4,		normal_strength );
-			output				=	mix( output, reflection4,	reflect_strength );
-			output				=	mix( output, fresnel4,		fresnel_strength );
-			
-			return output;
+			vec4		output = calculate_light_and_color(p, ray_direction, col);
+			return	output;
 		}
 		if( t > MAX_DISTANCE )
 			break;

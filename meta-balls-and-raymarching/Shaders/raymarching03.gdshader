@@ -217,7 +217,7 @@ vec3 get_normal( vec3 p )
 }
 
 // ----------------------------------------------------------------- get lambert
-vec3	 get_lambert( vec3 hit_point, vec3 normal, vec3 col )
+vec3 get_lambert( vec3 hit_point, vec3 normal, vec3 col )
 {
 	//create and asign the light object
 	//(this is so you can create multiple lights later if needed)

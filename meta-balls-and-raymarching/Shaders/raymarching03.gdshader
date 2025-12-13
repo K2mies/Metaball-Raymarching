@@ -221,7 +221,7 @@ vec3 get_lambert( vec3 hit_point, vec3 normal, vec3 col )
 {
 	//create and asign the light object
 	//(this is so you can create multiple lights later if needed)
-	Light light00;
+	Light 						light00;
 	light00.position		=	light_position;
 	light00.color			=	light_color;
 	light00.brightness		=	light_brightness;

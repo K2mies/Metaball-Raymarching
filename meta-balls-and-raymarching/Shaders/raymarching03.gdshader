@@ -8,25 +8,24 @@ render_mode unshaded;
 // -------------------------------------------------------------------- uniforms
 uniform	sampler2D	reflection_texture;
 
-uniform float		normal_strength		= .1f;
-uniform float		lambert_strength		= .5f;
-uniform float		reflect_strength		= .5f;
-uniform float		fresnel_strength		= .5f;
+uniform float		normal_strength				= .1f;
+uniform float		lambert_strength				= .5f;
+uniform float		reflect_strength				= .5f;
+uniform float		fresnel_strength				= .5f;
 
-uniform vec3 		fresnel_color 			: source_color 					=	vec3(1.f); 
-uniform float 		fresnel_min_reflectance : hint_range(0.f, 1.f, .01f) 	= 	.05f;
-uniform float 		fresnel_exponent 		: hint_range(.1f, 10.f, .1f) 	= 	2.f;
-uniform float 		fresnel_intensity 		: hint_range(0.f, 20.f, .1f) 	= 	1.f;
-uniform float 		rim_start_threshold 		: hint_range(0.f, 1.f, .01f) 	= 	.5f;
-uniform float 		rim_softness_width 		: hint_range(.001f, .5f, .001f) 	= 	.01f;
+uniform vec3 		fresnel_color 				: source_color 					=	vec3(1.f); 
+uniform float 		fresnel_min_reflectance 		: hint_range(0.f, 1.f, .01f) 	= 	.05f;
+uniform float 		fresnel_exponent 			: hint_range(.1f, 10.f, .1f) 	= 	2.f;
+uniform float 		fresnel_intensity 			: hint_range(0.f, 20.f, .1f) 	= 	1.f;
+uniform float 		rim_start_threshold 			: hint_range(0.f, 1.f, .01f) 	= 	.5f;
+uniform float 		rim_softness_width 			: hint_range(.001f, .5f, .001f) 	= 	.01f;
 
 uniform vec3			translate[4];
 uniform vec3			colors[4];
 
-uniform float		light_brightness;
 uniform vec3			light_position;
-uniform vec4			light_color;
-uniform vec3			ambient_color;
+uniform float		light_brightness;
+uniform vec3			ambient_color				 =	vec3(0.f);
 
 uniform vec3			cube_rotation_axis			=	vec3( 0.f, 1.f, 0.f );
 uniform float		cube_rotation_amount			=	0.f;
@@ -42,7 +41,7 @@ uniform float		sphere_size					=	1.f;
 uniform vec2			torus_radii					= 	vec2( 1.5f, .5f );
 uniform vec2			cylinder_dimensions			=	vec2( 1.f, 2.f );
 
-uniform float	weight;
+uniform float		weight;
 
 // ------------------------------------------------------------------- variables
 const int	MAX_STEPS		= 	300;
@@ -87,7 +86,6 @@ struct	Light
 	vec3		position;
 	float	brightness;
 	vec3		ambient;
-	vec4		color;	
 };
 
 // ------------------------------------------------------ signed distance fields
@@ -223,7 +221,6 @@ vec3	 get_lambert( vec3 hit_point, vec3 normal, vec3 col )
 	//(this is so you can create multiple lights later if needed)
 	Light light00;
 	light00.position		=	light_position;
-	light00.color		=	light_color;
 	light00.brightness	=	light_brightness;
 	light00.ambient		= 	ambient_color;
 	
@@ -233,27 +230,24 @@ vec3	 get_lambert( vec3 hit_point, vec3 normal, vec3 col )
 	// The Lambertian contribution is the dot product of the Normal (N) and Light Direction (L).
     // clamp() or max(0.0, ...) ensures we only light surfaces facing the light (no negative light).
 	float diffuse		=	max( 0.f, dot( normal, direction ) );
-
 	
 	// put it all together
-	vec3 output			=	light00.ambient *
-							light00.color.rgb * 
-							diffuse * 
-							col * 
-							light00.brightness;
-	
+	vec3 output			=	col * 
+							diffuse + 
+							light00.brightness *
+							light00.ambient;
 	return output;
 }
 
 // -------------------------------------------------------------- get reflection
 vec3 sample( vec3 r )
 {
-	float longitude	=	atan( r.x, r.z );
-	float latitude	=	acos( clamp( r.y, -1.f, 1.f ) );
+	float longitude		=	atan( r.x, r.z );
+	float latitude		=	acos( clamp( r.y, -1.f, 1.f ) );
 	
 	//Normalization to uv coordinates
-	longitude		=	( longitude + 3.14159265359 ) / ( 2.0 * 3.14159265359 );
-	latitude			=	latitude / 3.14159265359;
+	longitude			=	( longitude + 3.14159265359 ) / ( 2.0 * 3.14159265359 );
+	latitude				=	latitude / 3.14159265359;
 	
 	vec2 uv = vec2( longitude, latitude );
 	
@@ -278,13 +272,13 @@ vec3 get_reflection( vec3 hit_point, vec3 normal, vec3 view_direction)
 // ----------------------------------------------------------------- get fresnel
 float get_schlick( vec3 normal, vec3 view_vec, float fresnel_min )
 {
-	float dot_product		= dot( normal, view_vec);
-	float absolute_value		= abs( dot_product );
-	float cos_theta			= clamp( absolute_value, 0.f, 1.f );
+	float dot_product			= dot( normal, view_vec);
+	float absolute_value			= abs( dot_product );
+	float cos_theta				= clamp( absolute_value, 0.f, 1.f );
 	
-	float power_term 		= pow( 1.f - cos_theta, fresnel_exponent );
+	float power_term 			= pow( 1.f - cos_theta, fresnel_exponent );
 	
-	float output 			= fresnel_min + ( 1.f - fresnel_min ) * power_term;
+	float output 				= fresnel_min + ( 1.f - fresnel_min ) * power_term;
 	
 	return output;
 }

@@ -353,7 +353,7 @@ vec4 raymarch_color( vec3 ray_origin, vec3 ray_direction )
 
 		if( abs( d ) < MIN_DISTANCE )
 		{
-			vec4		output = calculate_light_and_color(p, ray_direction, col);
+			vec4	output = calculate_light_and_color(p, ray_direction, col);
 			return	output;
 		}
 		if( t > MAX_DISTANCE )

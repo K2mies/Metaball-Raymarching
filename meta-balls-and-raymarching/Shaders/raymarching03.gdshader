@@ -8,10 +8,10 @@ render_mode unshaded;
 // -------------------------------------------------------------------- uniforms
 uniform	sampler2D	reflection_texture;
 
-uniform float		normal_strength				= .1f;
-uniform float		lambert_strength			= .5f;
-uniform float		reflect_strength			= .5f;
-uniform float		fresnel_strength			= .5f;
+uniform float		normal_strength				= 	.1f;
+uniform float		lambert_strength			= 	.5f;
+uniform float		reflect_strength			= 	.5f;
+uniform float		fresnel_strength			= 	.5f;
 
 uniform vec3 		fresnel_color 				: source_color 						=	vec3(1.f); 
 uniform float 		fresnel_min_reflectance 	: hint_range(0.f, 1.f, .01f) 		= 	.05f;

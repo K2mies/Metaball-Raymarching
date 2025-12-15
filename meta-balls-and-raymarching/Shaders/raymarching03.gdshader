@@ -318,11 +318,11 @@ vec4 calculate_light_and_color(vec3 p, vec3 ray_direction, vec3 col)
 			
 	//normalize the layers by deviding by the total 
 	//amount of layes
-	col					=	col 			/ 5.f;
-	normal				=	normal		/ 5.f;
-	lambert				=	lambert		/ 5.f;
-	reflection			=	reflection	/ 5.f;
-	fresnel				=	fresnel		/ 5.f;
+	col					=	col 				/ 5.f;
+	normal				=	normal				/ 5.f;
+	lambert				=	lambert				/ 5.f;
+	reflection			=	reflection			/ 5.f;
+	fresnel				=	fresnel				/ 5.f;
 			
 	//add to vec4 (makes a difference to do it here)
 	vec4 color4			=	vec4( col,			1.f );
